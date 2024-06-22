@@ -1,80 +1,91 @@
 const express = require('express');
-const fetch = require('node-fetch');
 const cors = require('cors');
 const puppeteer = require('puppeteer');
-const rateLimit = require('express-rate-limit');
+const Replicate = require('replicate');
+require('dotenv').config();
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:3000' })); 
+const port = 3001;
+const replicate = new Replicate({ auth: process.env.REPLICATE_API_KEY });
 
-const limiter = rateLimit({
-  windowMs: 60 * 1000, 
-  max: 10, 
-  standardHeaders: true,
-  legacyHeaders: false,
+app.use(cors());
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('Proxy server is running');
 });
 
-app.use('/proxy', limiter);
-
-const cache = new Map();
-const CACHE_EXPIRATION_TIME = 3600 * 1000; 
-
 app.get('/proxy', async (req, res) => {
+  const url = req.query.url;
+  console.log(`Received request to analyze URL: ${url}`);
+
   try {
-    const url = req.query.url;
+    const text = await fetchWebsiteText(url);
+    console.log(`Fetched text from ${url}`);
+    const aiAnalysis = await analyzeTextWithAI(text);
+    console.log(`AI Analysis completed for ${url}`);
     
-    if (cache.has(url)) {
-      const cachedData = cache.get(url);
-      if (Date.now() - cachedData.timestamp < CACHE_EXPIRATION_TIME) {
-        return res.json(cachedData);
-      }
-    }
-
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.3'
-    );
-
-    try {
-      await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 }); // 30-second timeout
-    } catch (error) {
-      console.error("Navigation Error:", error.message);
-      res.status(500).json({ error: "Could not fetch data, Timed out or unreachable!" });
-      await browser.close(); // Close the browser if navigation fails
-      return; // Prevent further execution
-    }
-
-    // Extract text content
-    const text = await page.evaluate(() => {
-      const bodyText = document.body.innerText; 
-      
-      // Remove common elements that might not be relevant for analysis
-      const selectorsToAvoid = ['script', 'style', 'header', 'footer', 'nav', 'form', '[role="navigation"]', '[aria-label="navigation"]', 'button', 'svg', 'iframe'];
-      selectorsToAvoid.forEach(selector => {
-        const elements = document.querySelectorAll(selector);
-        elements.forEach(el => el.remove());
-      });
-      return document.body.innerText;
-    });
-
-    await browser.close(); // Close the browser after extraction
-
-    const data = { text, timestamp: Date.now() };
-    cache.set(url, data); 
-    res.json(data);
+    res.json({ text, aiAnalysis });
   } catch (error) {
-    console.error(`Error fetching or parsing ${url}:`, error.message);
+    console.error('Error fetching URL or analyzing text:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
 
+async function fetchWebsiteText(url) {
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
-app.get('/', (req, res) => {
-  res.send('Proxy server is running!');
-});
+    // Customize this part to extract the specific text you need from the page
+    const text = await page.evaluate(() => document.body.innerText);
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Proxy server listening on port ${PORT}`);
+    return text;
+  } catch (error) {
+    console.error('Error fetching website text:', error.message);
+    throw new Error('Error fetching website text');
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
+}
+
+async function analyzeTextWithAI(text) {
+  const input = {
+    top_p: 0.9,
+    prompt: `Analyze the following website text, focusing on these key points:
+
+1. Problem: What problem does the product/service solve?
+2. Solution: How does it solve the problem? Features and benefits?
+3. Target Customers: Who are the ideal customers?
+4. Use Cases: Provide real-world examples of product/service usage.
+
+Website Text:
+${text}`,
+    min_tokens: 0,
+    temperature: 0.6,
+    prompt_template: "system\n\nYou are a helpful assistantuser\n\n{prompt}assistant\n\n",
+    presence_penalty: 1.15
+  };
+
+  try {
+    let aiResponse = '';
+    for await (const event of replicate.stream("meta/meta-llama-3-70b-instruct", { input })) {
+      aiResponse += event;
+    }
+
+    return aiResponse;
+  } catch (error) {
+    console.error('Replicate API Error:', error.message);
+    throw new Error('An error occurred while communicating with the Replicate API');
+  }
+}
+
+app.listen(port, () => {
+  console.log(`Proxy server running at http://localhost:${port}`);
 });
