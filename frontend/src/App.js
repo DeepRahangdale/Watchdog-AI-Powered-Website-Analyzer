@@ -4,7 +4,7 @@ import Login from './components/Login';
 import Home from './components/Home';
 import { auth } from './firebase'; // Import your Firebase authentication instance
 import History from './components/History';
-
+import './index.css';
 function App() {
     const [user, setUser] = useState(null);
 

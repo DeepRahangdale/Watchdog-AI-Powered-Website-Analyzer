@@ -1,0 +1,99 @@
+/* login.css */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;  /* Light background color */
+  }
+  
+  .login-form {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 350px; /* Adjust width as needed */
+  }
+  
+  .login-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .login-button,
+  .google-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 5px;
+  }
+  
+  .login-button {
+    background-color: #4CAF50; /* Green */
+  }
+  
+  .login-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+  }
+  
+  .google-button {
+    background-color: #DB4437; /* Red */
+  }
+  
+  .google-button:hover {
+    background-color: #C5392D; /* Darker red on hover */
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 9px;
+    text-align: center;
+  }
+
+  /* login.css */
+
+/* ... (previous CSS styles) ... */
+
+.login-form:hover {
+    transform: translateY(-5px);  /* Move the form slightly up */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow intensity */
+}
+
+.login-button:hover {
+    background-color: #388E3C; /* Slightly darker shade of green */
+}
+
+.google-button:hover {
+    background-color: #B71C1C; /* Slightly darker shade of red */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow on hover */
+}
+
+.login-form, .login-button, .google-button {
+    transition: all 0.3s ease;  /* Add smooth transitions */
+}
+

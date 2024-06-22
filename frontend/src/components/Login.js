@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { auth } from '../firebase'; 
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-
+import './Login.css';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -29,18 +29,29 @@ function Login() {
         }
     };
 
+    // Login.js
     return (
-        <div>
-            <h2>Login</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>} 
+        <div className="login-container">
+            <div className="login-form">
+                <h2 className="login-title">Login</h2>
+                {error && <p className="error-message">{error}</p>}
 
-            <form onSubmit={handleEmailPasswordLogin}>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-                <button type="submit">Login</button>
-            </form>
+                <form onSubmit={handleEmailPasswordLogin}>
+                    <div className="form-group">
+                        <label htmlFor="email">Email:</label>
+                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password">Password:</label>
+                        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </div>
+                    <button type="submit" className="login-button">Login</button>
+                </form>
 
-            <button onClick={handleGoogleLogin}>Sign In with Google</button>
+                <button onClick={handleGoogleLogin} className="google-button">
+                    Sign In with Google
+                </button>
+            </div>
         </div>
     );
 }

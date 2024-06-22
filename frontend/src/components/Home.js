@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import client from '../openai';
 import { db } from '../firebase';
 import { addDoc, collection } from 'firebase/firestore';
@@ -6,6 +6,8 @@ import ChatbotComponent from './Chatbot';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import { ThreeDots } from 'react-loader-spinner';
+import { auth } from '../firebase'; // Import Firebase authentication
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 
 function Home() {
   const [url, setUrl] = useState('');
@@ -13,7 +15,20 @@ function Home() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
+  const [user, setUser] = useState(null); 
+  const navigate = useNavigate(); 
 
+  useEffect(() => {
+    // Check user authentication status on component mount
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (!currentUser) {
+        navigate('/login');
+      }
+    });
+
+    return () => unsubscribe(); // Clean up the listener when the component unmounts
+  }, [navigate]);
   const handleAnalyze = async () => {
     if (!url.trim()) {
       setError('Please enter a valid website URL.');
@@ -49,6 +64,16 @@ function Home() {
       setError(error.message); 
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login'); 
+    } catch (error) {
+      console.error('Error logging out:', error);
+      // Handle logout errors here if needed
     }
   };
 
@@ -113,6 +138,11 @@ return (
                   <p><strong>AI Analysis:</strong> {analysis.aiAnalysis}</p>
                 </div>
               )}
+              {user && ( 
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
+      )}
         
               {showChatbot && <ChatbotComponent analysis={analysis} />}
             </div>
