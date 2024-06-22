@@ -1,12 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-const puppeteer = require('puppeteer');
-const Replicate = require('replicate');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import puppeteer from 'puppeteer';
+import MistralClient from '@mistralai/mistralai';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const port = 3001;
-const replicate = new Replicate({ auth: process.env.REPLICATE_API_KEY });
+const client = new MistralClient(process.env.MISTRAL_API_KEY);
 
 app.use(cors());
 app.use(express.json());
@@ -56,9 +58,7 @@ async function fetchWebsiteText(url) {
 }
 
 async function analyzeTextWithAI(text) {
-  const input = {
-    top_p: 0.9,
-    prompt: `Analyze the following website text, focusing on these key points:
+  const prompt = `Analyze the following website text, focusing on these key points:
 
 1. Problem: What problem does the product/service solve?
 2. Solution: How does it solve the problem? Features and benefits?
@@ -66,23 +66,25 @@ async function analyzeTextWithAI(text) {
 4. Use Cases: Provide real-world examples of product/service usage.
 
 Website Text:
-${text}`,
-    min_tokens: 0,
-    temperature: 0.6,
-    prompt_template: "system\n\nYou are a helpful assistantuser\n\n{prompt}assistant\n\n",
-    presence_penalty: 1.15
-  };
+${text}`;
 
   try {
+    const chatStreamResponse = await client.chatStream({
+      model: 'mistral-tiny',
+      messages: [{ role: 'user', content: prompt }],
+    });
+
     let aiResponse = '';
-    for await (const event of replicate.stream("meta/meta-llama-3-70b-instruct", { input })) {
-      aiResponse += event;
+    for await (const chunk of chatStreamResponse) {
+      if (chunk.choices[0].delta.content !== undefined) {
+        aiResponse += chunk.choices[0].delta.content;
+      }
     }
 
     return aiResponse;
   } catch (error) {
-    console.error('Replicate API Error:', error.message);
-    throw new Error('An error occurred while communicating with the Replicate API');
+    console.error('Mistral API Error:', error.message);
+    throw new Error('An error occurred while communicating with the Mistral API');
   }
 }
 
