@@ -95,7 +95,6 @@ function Home() {
 
       {analysis && (
         <div className="analysis-results">
-          <h3>Analysis Results:</h3>
           <p><strong>AI Analysis:</strong></p>
           {analysis.aiAnalysis.split('\n').map((line, index) => (
             <p key={index}>{line}</p>
