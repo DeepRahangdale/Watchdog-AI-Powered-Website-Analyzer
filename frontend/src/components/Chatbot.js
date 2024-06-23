@@ -1,38 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import ChatBot from 'react-chatbot-kit';
-import { isAuthenticated } from '../firebase';
-import config from './ChatbotConfig'; // Import your chatbot configuration
-import MessageParser from './MessageParser'; // Import your message parser
-import ActionProvider from './ActionProvider'; // Import your action provider
+import React, { useState } from 'react';
+import { useChatbot } from './useChatbot';
 
-function ChatbotComponent({ analysis }) {
-  const handleWelcomeMessage = (chatbot) => {
-    if (analysis) {
-      const initialMessage = `Hi there! I've analyzed the website you provided. Here's what I found:\n\n${analysis.aiAnalysis}\n\nHow can I help you further?`;
-      chatbot.sendMessage(initialMessage);
-    } else {
-      chatbot.sendMessage("Hi there! How can I help you with product analysis?");
-    }
+function ChatbotComponent({ text }) {
+  const [message, setMessage] = useState('');
+  const [responses, setResponses] = useState([]);
+  const { sendMessage, loading } = useChatbot(text);
+
+  const handleSendMessage = async () => {
+    const response = await sendMessage(message);
+    setResponses([...responses, { message, response }]);
+    setMessage('');
   };
 
-  const [showChatbot, setShowChatbot] = useState(false);
-
-  useEffect(() => {
-    if (isAuthenticated() && analysis) {
-      setShowChatbot(true);
-    }
-  }, [analysis]);
-
   return (
-    showChatbot && (
-      <ChatBot
-        config={config}
-        messageParser={MessageParser}
-        actionProvider={ActionProvider}
-        headerText="Product Analysis Chatbot"
-        placeholderText="Ask me about the product..."
-      />
-    )
+    <div className="chatbot-container">
+      <div className="chatbot-messages">
+        {responses.map((res, index) => (
+          <div key={index} className="chatbot-message">
+            <p><strong>You:</strong> {res.message}</p>
+            <p><strong>Bot:</strong> {res.response}</p>
+          </div>
+        ))}
+      </div>
+      <div className="chatbot-input">
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Ask something..."
+          disabled={loading}
+        />
+        <button onClick={handleSendMessage} disabled={loading}>
+          {loading ? 'Loading...' : 'Send'}
+        </button>
+      </div>
+    </div>
   );
 }
 

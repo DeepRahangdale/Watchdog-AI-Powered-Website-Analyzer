@@ -10,12 +10,13 @@ import { signOut, onAuthStateChanged } from 'firebase/auth';
 
 function Home() {
   const [url, setUrl] = useState('');
+  const [text, setText] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
-  const [user, setUser] = useState(null); 
-  const navigate = useNavigate(); 
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -35,40 +36,43 @@ function Home() {
     }
     setError(null);
     setLoading(true);
-    setShowChatbot(false); 
-  
+    setShowChatbot(false);
+
     try {
       const proxyUrl = `http://localhost:3001/proxy?url=${encodeURIComponent(url)}`;
       const response = await fetch(proxyUrl, {
         headers: { 'Accept': 'application/json' }
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error fetching from proxy server: ${response.status} ${response.statusText}`);
       }
-  
+
       const data = await response.json();
       console.log('Data received:', data); // Log the received data
       if (data.error) {
         throw new Error(data.error);
       }
-  
-      const newAnalysis = { url, aiAnalysis: data.aiAnalysis, timestamp: new Date() };
-  
-      setAnalysis(newAnalysis);
-      await addDoc(collection(db, 'analyses'), newAnalysis);
+
+      setText(data.text);
+      setAnalysis(data.aiAnalysis);
       setShowChatbot(true);
+
+      const newAnalysis = { url, aiAnalysis: data.aiAnalysis, timestamp: new Date() };
+      await addDoc(collection(db, 'analyses'), newAnalysis);
+
     } catch (error) {
       console.error('Error analyzing website:', error.message);
-      setError(error.message); 
+      setError(error.message);
     } finally {
       setLoading(false);
     }
   };
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate('/login'); 
+      navigate('/login');
     } catch (error) {
       console.error('Error logging out:', error);
     }
@@ -96,20 +100,19 @@ function Home() {
       {analysis && (
         <div className="analysis-results">
           <p><strong>AI Analysis:</strong></p>
-          {analysis.aiAnalysis.split('\n').map((line, index) => (
+          {analysis.split('\n').map((line, index) => (
             <p key={index}>{line}</p>
           ))}
         </div>
       )}
-      {user && ( 
+      {user && (
         <button onClick={handleLogout} className="logout-button">
           Logout
         </button>
       )}
-      {showChatbot && <ChatbotComponent analysis={analysis} />}
+      {showChatbot && <ChatbotComponent text={text} />}
     </div>
   );
 }
-
 
 export default Home;

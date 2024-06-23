@@ -34,6 +34,30 @@ app.get('/proxy', async (req, res) => {
   }
 });
 
+app.post('/chatbot', async (req, res) => {
+  const { text, question } = req.body;
+  const prompt = `You are a chatbot that can answer questions based on the following website text:\n\n${text}\n\nQuestion: ${question}\n\nAnswer:`;
+
+  try {
+    const chatStreamResponse = await client.chatStream({
+      model: 'mistral-tiny',
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    let aiResponse = '';
+    for await (const chunk of chatStreamResponse) {
+      if (chunk.choices[0].delta.content !== undefined) {
+        aiResponse += chunk.choices[0].delta.content;
+      }
+    }
+
+    res.json({ answer: aiResponse });
+  } catch (error) {
+    console.error('Mistral API Error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 async function fetchWebsiteText(url) {
   let browser;
   try {
