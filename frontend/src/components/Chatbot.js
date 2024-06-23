@@ -1,41 +1,47 @@
 import React, { useState } from 'react';
 import { useChatbot } from './useChatbot';
+import './ChatbotComponent.css';
 
-function ChatbotComponent({ text }) {
+const ChatbotComponent = ({ text }) => {
   const [message, setMessage] = useState('');
   const [responses, setResponses] = useState([]);
   const { sendMessage, loading } = useChatbot(text);
 
-  const handleSendMessage = async () => {
+  const handleSend = async () => {
+    if (!message.trim()) return;
     const response = await sendMessage(message);
-    setResponses([...responses, { message, response }]);
+    setResponses([...responses, { question: message, answer: response }]);
     setMessage('');
   };
 
   return (
     <div className="chatbot-container">
       <div className="chatbot-messages">
-        {responses.map((res, index) => (
+        {responses.map((resp, index) => (
           <div key={index} className="chatbot-message">
-            <p><strong>You:</strong> {res.message}</p>
-            <p><strong>Bot:</strong> {res.response}</p>
+            <div className="user-message">
+              <strong>You:</strong> {resp.question}
+            </div>
+            <div className="bot-response">
+              <strong>Bot:</strong> {resp.answer}
+            </div>
           </div>
         ))}
       </div>
-      <div className="chatbot-input">
+      <div className="chatbot-input-container">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Ask something..."
-          disabled={loading}
+          placeholder="Ask a question..."
+          className="chatbot-input"
         />
-        <button onClick={handleSendMessage} disabled={loading}>
-          {loading ? 'Loading...' : 'Send'}
+        <button onClick={handleSend} disabled={loading} className="send-button">
+          {loading ? 'Sending...' : 'Send'}
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default ChatbotComponent;

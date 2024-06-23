@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Home from './components/Home';
 import { auth } from './firebase'; // Import your Firebase authentication instance
-import History from './components/History';
 import './index.css';
 function App() {
     const [user, setUser] = useState(null);
@@ -20,7 +19,6 @@ function App() {
         <Routes>
             <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
             <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
-            <Route path="/history" element={user ? <History /> : <Navigate to="/login" />} />
         </Routes>
     );
 }
