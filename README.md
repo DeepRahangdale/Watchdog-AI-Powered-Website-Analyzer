@@ -17,7 +17,6 @@ This application empowers users to gain insightful analysis of any website using
 * **Backend:** Node.js, Express.js, Puppeteer
 * **AI Model:** Mistral
 * **Authentication:** Firebase
-* **Chatbot Framework:** react-chatbot-kit
 
 ## Installation and Setup
 
