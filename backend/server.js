@@ -41,7 +41,7 @@ async function fetchWebsiteText(url) {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
 
     // Customize this part to extract the specific text you need from the page
     const text = await page.evaluate(() => document.body.innerText);
