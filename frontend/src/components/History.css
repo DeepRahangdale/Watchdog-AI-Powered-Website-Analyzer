@@ -1,0 +1,66 @@
+.history-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .analysis-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 80%; /* Adjust width as needed */
+    margin-bottom: 30px;
+  }
+  
+  .analysis-item {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s; /* Add smooth transitions */
+  }
+  
+  .analysis-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .analysis-url, .analysis-summary {
+    margin-bottom: 10px;
+  }
+  
+  .view-details-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .view-details-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+  }
+  
+  .analysis-details {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 80%; 
+  }
+  
+  /* Optional: Style the <pre> tag for better code formatting */
+  .analysis-details pre {
+    white-space: pre-wrap;
+    overflow: auto;
+  }
+  

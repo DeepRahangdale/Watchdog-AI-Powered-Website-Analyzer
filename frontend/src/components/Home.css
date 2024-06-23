@@ -91,3 +91,20 @@
   color: #fff;
 }
 
+.history-button {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #333;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.history-button:hover {
+  background-color: #333;
+  color: #fff;
+}

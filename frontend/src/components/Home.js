@@ -107,11 +107,15 @@ function Home() {
           ))}
         </div>
       )}
-      {user && (
-        <button onClick={handleLogout} className="logout-button">
-          Logout
+      
+    {user && (
+      <>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+        <button onClick={() => navigate('/history')} className="history-button">
+          History
         </button>
-      )}
+      </>
+    )}
       {showChatbot && <ChatbotComponent text={text} />}
     </div>
   );
