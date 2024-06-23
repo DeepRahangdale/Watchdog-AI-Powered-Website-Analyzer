@@ -29,6 +29,7 @@ function Home() {
     return () => unsubscribe();
   }, [navigate]);
 
+//to handle analyze button and placeholder
   const handleAnalyze = async () => {
     if (!url.trim()) {
       setError('Please enter a valid website URL.');
@@ -49,7 +50,7 @@ function Home() {
       }
 
       const data = await response.json();
-      console.log('Data received:', data); // Log the received data
+      console.log('Data received:', data); // Log when the data is received
       if (data.error) {
         throw new Error(data.error);
       }
@@ -69,6 +70,7 @@ function Home() {
     }
   };
 
+  //to handle logout
   const handleLogout = async () => {
     try {
       await signOut(auth);

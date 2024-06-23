@@ -33,7 +33,7 @@ app.get('/proxy', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
+//for our chatbot
 app.post('/chatbot', async (req, res) => {
   const { text, question } = req.body;
   const prompt = `You are a chatbot that can answer questions based on the following website text:\n\n${text}\n\nQuestion: ${question}\n\nAnswer:`;
@@ -58,6 +58,7 @@ app.post('/chatbot', async (req, res) => {
   }
 });
 
+//function to extract the requidered content from the website
 async function fetchWebsiteText(url) {
   let browser;
   try {
@@ -67,7 +68,7 @@ async function fetchWebsiteText(url) {
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-    // Customize this part to extract the specific text you need from the page
+    // Yaha Update karo to extract specific text you need from the page
     const text = await page.evaluate(() => document.body.innerText);
 
     return text;
@@ -81,6 +82,7 @@ async function fetchWebsiteText(url) {
   }
 }
 
+//Function to analyze the text which we extract
 async function analyzeTextWithAI(text) {
   const prompt = `Analyze the following website text, focusing on these key points:
 

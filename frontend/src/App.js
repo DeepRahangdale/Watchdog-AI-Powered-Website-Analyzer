@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Home from './components/Home';
-import { auth } from './firebase'; // Import your Firebase authentication instance
+import { auth } from './firebase'; 
 import './index.css';
 function App() {
     const [user, setUser] = useState(null);

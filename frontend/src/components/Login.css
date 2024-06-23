@@ -1,18 +1,17 @@
-/* login.css */
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0f0f0;  /* Light background color */
+    background-color: #f0f0f0;  
   }
   
   .login-form {
     background-color: white;
     padding: 30px;
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    width: 350px; /* Adjust width as needed */
+    border-radius: 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 350px; 
   }
   
   .login-title {
@@ -54,19 +53,19 @@
   }
   
   .login-button {
-    background-color: #4CAF50; /* Green */
+    background-color: #4CAF50; 
   }
   
   .login-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #45a049; 
   }
   
   .google-button {
-    background-color: #DB4437; /* Red */
+    background-color: #DB4437; 
   }
   
   .google-button:hover {
-    background-color: #C5392D; /* Darker red on hover */
+    background-color: #C5392D; 
   }
   
   .error-message {
@@ -75,25 +74,23 @@
     text-align: center;
   }
 
-  /* login.css */
-
-/* ... (previous CSS styles) ... */
+ 
 
 .login-form:hover {
-    transform: translateY(-5px);  /* Move the form slightly up */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow intensity */
+    transform: translateY(-5px);  
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
 .login-button:hover {
-    background-color: #388E3C; /* Slightly darker shade of green */
+    background-color: #388E3C; 
 }
 
 .google-button:hover {
-    background-color: #B71C1C; /* Slightly darker shade of red */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow on hover */
+    background-color: #B71C1C; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
 .login-form, .login-button, .google-button {
-    transition: all 0.3s ease;  /* Add smooth transitions */
+    transition: all 0.3s ease;  
 }
 
