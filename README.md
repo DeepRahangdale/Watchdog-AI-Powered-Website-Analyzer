@@ -31,14 +31,25 @@ This application empowers users to gain insightful analysis of any website using
 1. Clone this repository.
 2. Navigate to the `backend` directory: `cd backend`
 3. Install dependencies: `npm install`
-4. Create a `.env` file in the `backend` directory and add your Mistral API key: MISTRAL_API_KEY=your_mistral_api_key
+4. Create a `.env` file in the `backend` directory and add your Mistral API key:
+```plaintext
+ MISTRAL_API_KEY=your_mistral_api_key
+```
 5. Run the server: `npm start`
 
 **Frontend Setup:**
 
 1. Navigate to the `frontend` directory: `cd frontend`
 2. Install dependencies: `npm install`
-3. Update `firebase.js` with your Firebase configuration details.
+3. Update `firebase.js` with your Firebase configuration details:
+```plaintext
+REACT_APP_FIREBASE_API_KEY=
+REACT_APP_FIREBASE_AUTH_DOMAIN=
+REACT_APP_FIREBASE_PROJECT_ID=
+REACT_APP_FIREBASE_STORAGE_BUCKET=
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=
+REACT_APP_FIREBASE_APP_ID=
+```
 4. Start the development server: `npm start`
 
 ## Usage
