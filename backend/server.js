@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/proxy', async (req, res) => {
-  const url = req.query.url;
+  const url = req.query.url; //route jo url parameter expect krta ho!!
   console.log(`Received request to analyze URL: ${url}`);
 
   try {
@@ -27,7 +27,7 @@ app.get('/proxy', async (req, res) => {
     const aiAnalysis = await analyzeTextWithAI(text);
     console.log(`AI Analysis completed for ${url}`);
     
-    res.json({ text, aiAnalysis });
+    res.json({ text, aiAnalysis }); //to share respone in json formst
   } catch (error) {
     console.error('Error fetching URL or analyzing text:', error.message);
     res.status(500).json({ error: error.message });
@@ -35,12 +35,12 @@ app.get('/proxy', async (req, res) => {
 });
 //for our chatbot
 app.post('/chatbot', async (req, res) => {
-  const { text, question } = req.body;
+  const { text, question } = req.body; //expects a POST request with text & question in body!!!
   const prompt = `You are a chatbot that can answer questions based on the following website text:\n\n${text}\n\nQuestion: ${question}\n\nAnswer:`;
 
   try {
     const chatStreamResponse = await client.chatStream({
-      model: 'mistral-tiny',
+      model: 'mistral-large-latest',
       messages: [{ role: 'user', content: prompt }],
     });
 
@@ -66,7 +66,7 @@ async function fetchWebsiteText(url) {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    await page.goto(url, { waitUntil: 'domcontentloaded' }); //initial HTML document has been completely loaded
 
     // Yaha Update karo to extract specific text you need from the page
     const text = await page.evaluate(() => document.body.innerText);
