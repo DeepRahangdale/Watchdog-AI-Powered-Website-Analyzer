@@ -111,9 +111,6 @@ function Home() {
     {user && (
       <>
         <button onClick={handleLogout} className="logout-button">Logout</button>
-        <button onClick={() => navigate('/')} className="history-button">
-          History
-        </button>
       </>
     )}
       {showChatbot && <ChatbotComponent text={text} />}
