@@ -11,7 +11,7 @@ const port = process.env.PORT || 3001; // Use port provided by hosting platform
 const client = new MistralClient(process.env.MISTRAL_API_KEY);
 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*', // Allow only specific origin or all origins
+  origin: process.env.CORS_ORIGIN, // Allow only specific origin or all origins
 }));
 app.use(express.json());
 
