@@ -7,7 +7,7 @@ export const useChatbot = (text) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/chatbot', {
+      const response = await fetch('http://localhost:8080/chatbot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

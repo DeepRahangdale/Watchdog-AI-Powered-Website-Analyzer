@@ -40,7 +40,7 @@ function Home() {
     setShowChatbot(false);
 
     try {
-      const proxyUrl = `http://localhost:3001/proxy?url=${encodeURIComponent(url)}`;
+      const proxyUrl = `http://localhost:8080/proxy?url=${encodeURIComponent(url)}`;
       const response = await fetch(proxyUrl, {
         headers: { 'Accept': 'application/json' }
       });
