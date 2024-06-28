@@ -64,6 +64,7 @@ async function fetchWebsiteText(url) {
   let browser;
   try {
     browser = await puppeteer.launch({
+      executablePath: '/path/to/chrome',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
