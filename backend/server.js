@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/proxy', async (req, res) => {
-  const url = req.query.url; //route jo url parameter expect krta ho!!
+  const url = req.query.url;
   console.log(`Received request to analyze URL: ${url}`);
 
   try {
@@ -31,15 +31,15 @@ app.get('/proxy', async (req, res) => {
     const aiAnalysis = await analyzeTextWithAI(text);
     console.log(`AI Analysis completed for ${url}`);
     
-    res.json({ text, aiAnalysis }); //to share respone in json formst
+    res.json({ text, aiAnalysis });
   } catch (error) {
     console.error('Error fetching URL or analyzing text:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
-//for our chatbot
+
 app.post('/chatbot', async (req, res) => {
-  const { text, question } = req.body; //expects a POST request with text & question in body!!!
+  const { text, question } = req.body;
   const prompt = `You are a chatbot that can answer questions based on the following website text:\n\n${text}\n\nQuestion: ${question}\n\nAnswer:`;
 
   try {
@@ -62,17 +62,19 @@ app.post('/chatbot', async (req, res) => {
   }
 });
 
-//function to extract the requidered content from the website
 async function fetchWebsiteText(url) {
   let browser;
   try {
+    const browserFetcher = puppeteer.createBrowserFetcher();
+    const revisionInfo = await browserFetcher.download('126.0.6478.126');
+    
     browser = await puppeteer.launch({
+      executablePath: revisionInfo.executablePath,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'domcontentloaded' }); //initial HTML document has been completely loaded
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-    // Yaha Update karo to extract specific text you need from the page
     const text = await page.evaluate(() => document.body.innerText);
 
     return text;
@@ -86,7 +88,6 @@ async function fetchWebsiteText(url) {
   }
 }
 
-//Function to analyze the text which we extract
 async function analyzeTextWithAI(text) {
   const prompt = `Analyze the following website text, focusing on these key points:
 
