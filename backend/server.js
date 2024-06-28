@@ -33,7 +33,7 @@ app.get('/proxy', async (req, res) => {
     
     res.json({ text, aiAnalysis });
   } catch (error) {
-    console.error('Error fetching URL or analyzing text:', error.message);
+    console.error('Error fetching URL or analyzing text:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -57,7 +57,7 @@ app.post('/chatbot', async (req, res) => {
 
     res.json({ answer: aiResponse });
   } catch (error) {
-    console.error('Mistral API Error:', error.message);
+    console.error('Mistral API Error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -65,25 +65,25 @@ app.post('/chatbot', async (req, res) => {
 async function fetchWebsiteText(url) {
   let browser;
   try {
-    const browserFetcher = puppeteer.createBrowserFetcher();
-    const revisionInfo = await browserFetcher.download('126.0.6478.126');
-    
+    console.log('Starting Puppeteer...');
     browser = await puppeteer.launch({
-      executablePath: revisionInfo.executablePath,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'domcontentloaded' });
+    console.log('Page loaded');
 
     const text = await page.evaluate(() => document.body.innerText);
+    console.log('Extracted text from page');
 
     return text;
   } catch (error) {
-    console.error('Error fetching website text:', error.message);
+    console.error('Error in fetchWebsiteText:', error);
     throw new Error('Error fetching website text');
   } finally {
     if (browser) {
       await browser.close();
+      console.log('Browser closed');
     }
   }
 }
@@ -114,7 +114,7 @@ ${text}`;
 
     return aiResponse;
   } catch (error) {
-    console.error('Mistral API Error:', error.message);
+    console.error('Error in analyzeTextWithAI:', error);
     throw new Error('An error occurred while communicating with the Mistral API');
   }
 }
