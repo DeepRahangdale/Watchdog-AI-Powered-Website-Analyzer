@@ -40,7 +40,7 @@ function Home() {
     setShowChatbot(false);
 
     try {
-      const proxyUrl = `https://webwatchdog-ai-powered-website-analyzer.onrender.com/proxy?url=${encodeURIComponent(url)}`;
+      const proxyUrl = `http://localhost:3001/proxy?url=${encodeURIComponent(url)}`;
       const response = await fetch(proxyUrl, {
         headers: { 'Accept': 'application/json' }
       });
