@@ -10,7 +10,11 @@ const app = express();
 const port = 3001;
 const client = new MistralClient(process.env.MISTRAL_API_KEY);
 
-app.use(cors());
+const corsOptions = {
+  origin: 'https://your-frontend-site.onrender.com', // Update with your actual frontend URL
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/', (req, res) => {
