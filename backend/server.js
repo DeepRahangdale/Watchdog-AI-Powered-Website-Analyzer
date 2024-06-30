@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;  // Use the port provided by the environment, fallback to 3001 if not provided
+const port = process.env.PORT || 3001;
 const client = new MistralClient(process.env.MISTRAL_API_KEY);
 
 const corsOptions = {
@@ -79,6 +79,7 @@ async function fetchWebsiteText(url) {
         '--headless',
         '--remote-debugging-port=9222'
       ],
+      executablePath: puppeteer.executablePath(),  // Ensure Puppeteer uses the correct executable path
     });
     const page = await browser.newPage();
     console.log('Navigating to URL:', url);
