@@ -103,6 +103,7 @@ async function analyzeTextWithAI(text) {
   2. Solution: How does the product solve the problem? Features and benefits?
   3. Target Customers: Who are the ideal customers for this product?
   4. Use Cases: Provide real-world examples of how this product is used.
+  5. Comparison: Compare this product with similar products based on their specifications.
   
   Product Description:
 ${text}`;
