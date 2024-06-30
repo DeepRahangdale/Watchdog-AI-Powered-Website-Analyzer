@@ -12,7 +12,7 @@ const port = process.env.PORT || 3001;
 const client = new MistralClient(process.env.MISTRAL_API_KEY);
 
 const corsOptions = {
-  origin: 'https://webwatchdog-ai-powered-website-analyzer-1.onrender.com', // Update with your actual frontend URL
+  origin: 'https://watchdog-aipoweredwebsiteanalyzer.vercel.app', // Update with your actual frontend URL
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
