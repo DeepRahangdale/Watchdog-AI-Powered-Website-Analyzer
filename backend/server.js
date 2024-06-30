@@ -71,7 +71,7 @@ async function fetchWebsiteText(url) {
   try {
     console.log('Starting Puppeteer...');
     browser = await puppeteer.launch({
-      executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Update with your Chrome or Chromium executable path
+      executablePath: process.env.CHROME_BIN || '/usr/bin/google-chrome', // Update with the correct path for Render
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -100,6 +100,7 @@ async function fetchWebsiteText(url) {
     }
   }
 }
+
 
 async function analyzeTextWithAI(text) {
   const prompt = `Analyze the following website text, focusing on these key points:
