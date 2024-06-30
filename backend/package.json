@@ -19,6 +19,8 @@
     "dotenv": "^16.4.5",
     "express-rate-limit": "^7.3.1",
     "firebase": "^10.12.2",
+    "gpt-3-encoder": "^1.1.4",
+    "lodash.chunk": "^4.2.0",
     "mongoose": "^8.4.3",
     "playwright": "^1.44.1",
     "puppeteer": "^22.12.1",
