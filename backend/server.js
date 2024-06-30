@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import puppeteer from 'puppeteer-core'; // Import puppeteer-core
+import axios from 'axios';
+import cheerio from 'cheerio';
 import MistralClient from '@mistralai/mistralai';
 import dotenv from 'dotenv';
 
@@ -67,50 +68,43 @@ app.post('/chatbot', async (req, res) => {
 });
 
 async function fetchWebsiteText(url) {
-  let browser;
   try {
-    console.log('Starting Puppeteer...');
-    browser = await puppeteer.launch({
-      executablePath: process.env.CHROME_BIN || '/usr/bin/google-chrome', // Update with the correct path for Render
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--headless',
-        '--remote-debugging-port=9222'
-      ],
+    const response = await axios.get(url);
+    const html = response.data;
+    
+    const $ = cheerio.load(html);
+    
+    // Initialize an array to store extracted text
+    const relevantText = [];
+
+    // Extract text directly beneath <p>, <span>, <h1> to <h6> tags
+    $('p, span, h1, h2, h3, h4, h5, h6').each((index, element) => {
+      const text = $(element).clone()    // Clone the element
+                          .children()    // Select all the children elements
+                          .remove()     // Remove all the children elements
+                          .end()        // Go back to the selected element
+                          .text();      // Get the text content
+      if (text.trim().length > 0) {
+        relevantText.push(text.trim()); // Push trimmed text to array if not empty
+      }
     });
-    const page = await browser.newPage();
-    console.log('Navigating to URL:', url);
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
-    console.log('Page loaded:', url);
 
-    const text = await page.evaluate(() => document.body.innerText);
-    console.log('Extracted text from page');
-
-    return text;
+    return relevantText.join('\n'); // Join array elements with newline and return as string
   } catch (error) {
-    console.error('Error in fetchWebsiteText:', error);
+    console.error('Error fetching website text:', error);
     throw new Error('Error fetching website text');
-  } finally {
-    if (browser) {
-      await browser.close();
-      console.log('Browser closed');
-    }
   }
 }
 
-
 async function analyzeTextWithAI(text) {
-  const prompt = `Analyze the following website text, focusing on these key points:
+  const prompt = `Analyze the following text focusing on the product described:
 
-1. Problem: What problem does the product/service solve?
-2. Solution: How does it solve the problem? Features and benefits?
-3. Target Customers: Who are the ideal customers?
-4. Use Cases: Provide real-world examples of product/service usage.
-
-Website Text:
+  1. Problem: What problem does the product solve?
+  2. Solution: How does the product solve the problem? Features and benefits?
+  3. Target Customers: Who are the ideal customers for this product?
+  4. Use Cases: Provide real-world examples of how this product is used.
+  
+  Product Description:
 ${text}`;
 
   try {
