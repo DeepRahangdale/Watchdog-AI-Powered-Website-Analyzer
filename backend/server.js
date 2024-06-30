@@ -12,7 +12,7 @@ const port = process.env.PORT || 3001;
 const client = new MistralClient(process.env.MISTRAL_API_KEY);
 
 const corsOptions = {
-  origin: 'https://your-frontend-site.onrender.com', // Update with your actual frontend URL
+  origin: 'https://webwatchdog-ai-powered-website-analyzer-1.onrender.com', // Update with your actual frontend URL
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
@@ -71,25 +71,21 @@ async function fetchWebsiteText(url) {
   try {
     const response = await axios.get(url);
     const html = response.data;
-    
     const $ = cheerio.load(html);
-    
-    // Initialize an array to store extracted text
     const relevantText = [];
 
-    // Extract text directly beneath <p>, <span>, <h1> to <h6> tags
     $('p, span, h1, h2, h3, h4, h5, h6').each((index, element) => {
-      const text = $(element).clone()    // Clone the element
-                          .children()    // Select all the children elements
-                          .remove()     // Remove all the children elements
-                          .end()        // Go back to the selected element
-                          .text();      // Get the text content
+      const text = $(element).clone()    
+                          .children()    
+                          .remove()    
+                          .end()        
+                          .text();      
       if (text.trim().length > 0) {
-        relevantText.push(text.trim()); // Push trimmed text to array if not empty
+        relevantText.push(text.trim()); 
       }
     });
 
-    return relevantText.join('\n'); // Join array elements with newline and return as string
+    return relevantText.join('\n'); 
   } catch (error) {
     console.error('Error fetching website text:', error);
     throw new Error('Error fetching website text');
