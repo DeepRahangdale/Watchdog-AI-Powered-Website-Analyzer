@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import puppeteer from 'puppeteer';
+import axios from 'axios';
 import MistralClient from '@mistralai/mistralai';
 import dotenv from 'dotenv';
 
@@ -9,6 +9,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001;
 const client = new MistralClient(process.env.MISTRAL_API_KEY);
+const scrapingBeeApiKey = process.env.SCRAPINGBEE_API_KEY;
 
 const corsOptions = {
   origin: 'https://your-frontend-site.onrender.com', // Update with your actual frontend URL
@@ -67,37 +68,26 @@ app.post('/chatbot', async (req, res) => {
 });
 
 async function fetchWebsiteText(url) {
-  let browser;
   try {
-    console.log('Starting Puppeteer...');
-    browser = await puppeteer.launch({
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--headless',
-        '--remote-debugging-port=9222'
-      ],
-      executablePath: puppeteer.executablePath(),  // Ensure Puppeteer uses the correct executable path
+    console.log('Fetching website text using ScrapingBee...');
+    const response = await axios.get('https://app.scrapingbee.com/api/v1', {
+      params: {
+        api_key: scrapingBeeApiKey,
+        url: url,
+        render_js: false
+      }
     });
-    const page = await browser.newPage();
-    console.log('Navigating to URL:', url);
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
-    console.log('Page loaded:', url);
 
-    const text = await page.evaluate(() => document.body.innerText);
-    console.log('Extracted text from page');
-
-    return text;
+    if (response.data) {
+      const text = response.data;
+      console.log('Extracted text from page');
+      return text;
+    } else {
+      throw new Error('No data received from ScrapingBee');
+    }
   } catch (error) {
     console.error('Error in fetchWebsiteText:', error);
     throw new Error('Error fetching website text');
-  } finally {
-    if (browser) {
-      await browser.close();
-      console.log('Browser closed');
-    }
   }
 }
 
