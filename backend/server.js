@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;  // Use the port provided by the environment, fallback to 3001 if not provided
 const client = new MistralClient(process.env.MISTRAL_API_KEY);
 
 const corsOptions = {
@@ -24,6 +24,10 @@ app.get('/', (req, res) => {
 app.get('/proxy', async (req, res) => {
   const url = req.query.url;
   console.log(`Received request to analyze URL: ${url}`);
+
+  if (!isValidURL(url)) {
+    return res.status(400).json({ error: 'Invalid URL' });
+  }
 
   try {
     const text = await fetchWebsiteText(url);
@@ -67,11 +71,19 @@ async function fetchWebsiteText(url) {
   try {
     console.log('Starting Puppeteer...');
     browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--headless',
+        '--remote-debugging-port=9222'
+      ],
     });
     const page = await browser.newPage();
+    console.log('Navigating to URL:', url);
     await page.goto(url, { waitUntil: 'domcontentloaded' });
-    console.log('Page loaded');
+    console.log('Page loaded:', url);
 
     const text = await page.evaluate(() => document.body.innerText);
     console.log('Extracted text from page');
@@ -116,6 +128,15 @@ ${text}`;
   } catch (error) {
     console.error('Error in analyzeTextWithAI:', error);
     throw new Error('An error occurred while communicating with the Mistral API');
+  }
+}
+
+function isValidURL(string) {
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
   }
 }
 
